@@ -1,6 +1,8 @@
 import { FrameRequest, getFrameMessage, getFrameHtmlResponse, FrameButtonMetadata } from '@coinbase/onchainkit';
 import { NextRequest, NextResponse } from 'next/server';
 import { DEGEN_ADDRESS, DEGEN_POOL_ADDRESS, DEX_CACHE_TIME, FRAME_ADDRESS, FRAME_POOL_ADDRESS, NEXT_PUBLIC_URL } from '../config';
+import { DexResult, HistoryResult, PLResult } from '../types';
+import { getLast5Swaps, getPL } from '../lib';
 
 
 /* url params:
@@ -37,45 +39,30 @@ function getHomeResponse(): NextResponse {
 
 async function getResponse(req: NextRequest): Promise<NextResponse> {
   const searchParams = req.nextUrl.searchParams
-  let token: string | null = searchParams.get("token")
-  const tab: string | null = searchParams.get("tab")
-  const account: string | null = searchParams.get("account")
+  const paramToken: string | null = searchParams.get("token")
+  const paramTab: string | null = searchParams.get("tab")
+  const paramAccount: string | null = searchParams.get("account")
 
-  if (!token || !tab) {
+  if (!paramToken || !paramTab) {
     return getHomeResponse();
   }
-
-  let tokenAddress: string | undefined = '';
-  let accountIndex = account ? parseInt(account) : 0
-  let accountAddress: string | undefined = '';
-  let currentTab = tab === 'pl' ? 'pl' : 'history';
-  // let text: string | undefined = '';
 
   const body: FrameRequest = await req.json();
   const { isValid, message } = await getFrameMessage(body, { neynarApiKey: 'NEYNAR_ONCHAIN_KIT' });
 
-  let navButtons: FrameButtonMetadata[] = []
 
   if (!isValid) {
     return getHomeResponse();
   }
 
-  switch (message?.button) {
-    case ButtonInput.Home:
-      return getHomeResponse();
-    case ButtonInput.SwitchView:
-      currentTab = tab === 'pl' ? 'history' : 'pl';
-      break;
-    case ButtonInput.PrevAccount:
-      accountIndex = Math.max(accountIndex - 1, 0);
-      break;
-    case ButtonInput.NextAccount:
-      accountIndex = Math.min(accountIndex + 1, message.interactor.verified_accounts.length - 1);
-      break;
-  }
+  let accountIndex = paramAccount ? parseInt(paramAccount) : 0
+  let accountAddress: string | undefined = '';
+  let currentTab = paramTab.toLocaleLowerCase() === 'pl' ? 'pl' : 'history';
 
-  token = token === 'frame' ? 'frame' : 'degen';
-  tokenAddress = token === 'frame' ? FRAME_ADDRESS : DEGEN_ADDRESS;
+  let navButtons: FrameButtonMetadata[] = []
+
+  const token = paramToken === 'frame' ? 'frame' : 'degen';
+  const tokenAddress = token === 'frame' ? FRAME_ADDRESS : DEGEN_ADDRESS;
   const poolAddress = token === 'frame' ? FRAME_POOL_ADDRESS : DEGEN_POOL_ADDRESS;
 
   const switchViewButton = {
@@ -85,6 +72,21 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const numAccounts = message.interactor.verified_accounts.length;
   accountIndex = Math.min(accountIndex, numAccounts - 1);
   accountAddress = message.interactor.verified_accounts[accountIndex];
+
+  // handle button input
+  switch (message?.button) {
+    case ButtonInput.Home:
+      return getHomeResponse();
+    case ButtonInput.SwitchView:
+      currentTab = paramTab === 'pl' ? 'history' : 'pl';
+      break;
+    case ButtonInput.PrevAccount:
+      accountIndex = Math.max(accountIndex - 1, 0);
+      break;
+    case ButtonInput.NextAccount:
+      accountIndex = Math.min(accountIndex + 1, message.interactor.verified_accounts.length - 1);
+      break;
+  }
 
   if (numAccounts > 1 && accountIndex > 0 && accountIndex < numAccounts - 1) {
     navButtons = [
@@ -109,18 +111,30 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     ]
   }
 
-  // if (message?.input) {
-  //   text = message.input;
-  // }
+  // build image url for current tab and account
+  let imageUrl = `${NEXT_PUBLIC_URL}/api/images/${currentTab}?token=${token}&account=${accountAddress}`
 
-  // if (message?.button === 3) {
-  //   return NextResponse.redirect(
-  //     'https://www.google.com/search?q=cute+dog+pictures&tbm=isch&source=lnms',
-  //     { status: 302 },
-  //   );
-  // }
+  let dexResult: DexResult | undefined
 
-  // render page based on tab and account
+  if (currentTab === 'pl') {
+    const plResult: PLResult = await getPL(accountAddress, tokenAddress, poolAddress);
+    dexResult = plResult.dexResult;
+
+    imageUrl += `&entry_usd=${plResult.entryValueUSD}&avg_purchase_usd=${plResult.averagePurchasePrice}&token_balance=${plResult.tokenBalance}&current_usd=${plResult.currentValueUSD}&percentage_diff=${plResult.percentageDifference}&multiple_diff=${plResult.multipleDifference}`
+  } else if (currentTab === 'history') {
+    const swapHistory: HistoryResult = await getLast5Swaps(accountAddress, tokenAddress, poolAddress);
+    dexResult = swapHistory.dexResult;
+
+    // generate swap list params
+    swapHistory.swapRecords.forEach((record, index) => {
+      imageUrl += `&swap_${index + 1}=${JSON.stringify(record)}`
+    })
+  }
+
+  // add dex params
+  if (dexResult) {
+    imageUrl += `&price_usd=${dexResult.priceUSD}&change_m5=${dexResult.priceChange.m5}&change_h1=${dexResult.priceChange.h1}&change_h6=${dexResult.priceChange.h6}&change_h24=${dexResult.priceChange.h24}`
+  }
 
   return new NextResponse(
     getFrameHtmlResponse({
@@ -132,7 +146,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
         ...navButtons,
       ],
       image: {
-        src: `${NEXT_PUBLIC_URL}/park-1.png`,
+        src: imageUrl,
       },
       postUrl: `${NEXT_PUBLIC_URL}/api/frame?tab=${currentTab}&account=${accountIndex}`,
     }),

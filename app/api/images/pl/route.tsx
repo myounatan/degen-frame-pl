@@ -9,10 +9,10 @@ export async function GET(req: NextRequest) {
   let paramToken: string | null = searchParams.get("token")
   let paramAccount: string | null = searchParams.get("account")
   let paramPriceUSD: string | null = searchParams.get("price_usd")
-  let paramChange5M: string | null = searchParams.get("change_5m")
-  let paramChange1H: string | null = searchParams.get("change_1h")
-  let paramChange6H: string | null = searchParams.get("change_6h")
-  let paramChange24H: string | null = searchParams.get("change_24h")
+  let paramChangeM5: string | null = searchParams.get("change_m5")
+  let paramChangeH1: string | null = searchParams.get("change_h1")
+  let paramChangeH6: string | null = searchParams.get("change_h6")
+  let paramChangeH24: string | null = searchParams.get("change_h24")
   let paramEntryValueUSD: string | null = searchParams.get("entry_usd")
   let paramAvgPurchasePrice: string | null = searchParams.get("avg_purchase_usd")
   let paramTokenBalance: string | null = searchParams.get("token_balance")
@@ -21,16 +21,16 @@ export async function GET(req: NextRequest) {
   let multipleDifference: string | null = searchParams.get("multiple_diff")
 
   // build me a demo url
-  // https://pl-image.vercel.app/api/pl?token=DEGEN&account=0x23131e194d5881c7746D8B00e9365657fD2cB227&price_usd=0.005327&change_5m=-5.4&change_1h=-5.4&change_6h=-5.4&change_24h=55.4&entry_usd=3003.576666&avg_purchase_usd=0.042564&token_balance=888888926&current_usd=3003.56&percentage_diff=0.0&multiple_diff=1.0
+  // https://pl-image.vercel.app/api/pl?token=DEGEN&account=0x23131e194d5881c7746D8B00e9365657fD2cB227&price_usd=0.005327&change_m5=-5.4&change_h1=-5.4&change_h6=-5.4&change_h24=55.4&entry_usd=3003.576666&avg_purchase_usd=0.042564&token_balance=888888926&current_usd=3003.56&percentage_diff=0.0&multiple_diff=1.0
 
   // format data
   const priceUSD = formatDecimal(paramPriceUSD || "0", 'text-6xl')
   
   // use +/- notation for price changes
-  const change5M = parseFloat(paramChange5M || "0")
-  const change1H = parseFloat(paramChange1H || "0")
-  const change6H = parseFloat(paramChange6H || "0")
-  const change24H = parseFloat(paramChange24H || "0")
+  const change5M = parseFloat(paramChangeM5 || "0")
+  const change1H = parseFloat(paramChangeH1 || "0")
+  const change6H = parseFloat(paramChangeH6 || "0")
+  const change24H = parseFloat(paramChangeH24 || "0")
 
   let entryValueUSD = parseFloat(paramEntryValueUSD || "0")
   let entryValueUSDFormatted = commify(entryValueUSD)
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
   
   // use +/- notation for percentage difference
   const percentageDiff = parseFloat(percentageDifference || "0")
-  const percentageDiffFormatted = percentageDiff > 0 ? `+${percentageDiff}%` : (percentageDiff == 0 ? `-` : `-${percentageDiff}%`)
+  const percentageDiffFormatted = percentageDiff > 0 ? `+${percentageDiff}%` : (percentageDiff == 0 ? `-` : `${percentageDiff}%`)
 
   // use xNUM notation for multiple difference
   const multipleDiff = parseFloat(multipleDifference || "1")

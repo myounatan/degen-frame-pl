@@ -4,8 +4,9 @@ import { FeeAmount, Pool, TICK_SPACINGS, TickMath, computePoolAddress, priceToCl
 import { ApolloClient, DocumentNode, HttpLink, InMemoryCache, gql, split } from '@apollo/client/core';
 import { DEX_CACHE_TIME, LAST_5_TOKEN1_SWAPS_QUERY, TOKEN1_SWAPS_QUERY } from "./config";
 import { DexResult, HistoryResult, PLResult, SwapType, TokenPosition, TokenSwapRecord } from './types';
-import dotenv from 'dotenv';
 import { Contract, JsonRpcProvider } from 'ethers';
+
+import dotenv from 'dotenv';
 dotenv.config();
 
 // only balanceOf(address) required
@@ -30,31 +31,6 @@ const ERC20_ABI = [
     "type": "function"
   }
 ];
-
-export function cn(...inputs: string[]) {
-  return inputs.filter(Boolean).join(' ');
-}
-
-// create a function to read number of 0's after decimal and use <span tw="text-6xl justify-end items-end -mb-2">4</span> to create subscript
-export function formatDecimal(num: number, ...classNames: string[]) {
-  const zeroCount = countZerosAfterDecimal(num);
-  
-  if (zeroCount < 3) return num.toString();
-
-  const splitNum = num.toString().split('.');
-
-  return (
-    <>${splitNum[0]}.0<span tw={cn("justify-end items-end -mb-2", ...classNames)}>{zeroCount}</span>{splitNum[1].substring(zeroCount, length + zeroCount)}</>
-  )
-}
-
-// create a function to format a percentage number (already in percentage notation) to use green (#39c040) or red (#c03939) based on positive or negative
-// and format the string to include a '+' sign if positive, and a '-' sign if negative. if 0, return without a sign and use color grey (#8d8d8d)
-export function formatPercentage(num: number, ...classNames: string[]) {
-  if (num > 0) return <span tw={cn("text-[#39c040]", ...classNames)}>+{num}%</span>;
-  if (num < 0) return <span tw={cn("text-[#c03939]", ...classNames)}>-{num}%</span>;
-  return <span tw={cn("text-[#8d8d8d]", ...classNames)}>+0%</span>;
-}
 
 export async function getBalanceOf(address: string, tokenAddress: string): Promise<bigint> {
   const provider = new JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
@@ -81,20 +57,6 @@ async function getPoolDexResult(poolAddress: string): Promise<DexResult> {
     },
   }
 }
-
-function countZerosAfterDecimal(num: number): number {
-  const match = num.toString().match(/\.0*/);
-  return match ? match[0].length - 1 : 0;
-}
-
-// function formatDecimal(num: number, length: number = 4): string {
-//   const zeros = countZerosAfterDecimal(num);
-//   if (zeros <= 3) return num.toString();
-
-//   const splitNum = num.toString().split('.');
-
-//   return `${splitNum[0]}.0${toSubscript(zeros)}${splitNum[1].substring(zeros, length + zeros)}`;
-// }
 
 async function getSwaps(query: DocumentNode, userAddress: string, tokenAddress: string): Promise<any> {
   const uniswapClient = new ApolloClient({

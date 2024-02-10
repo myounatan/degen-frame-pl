@@ -1,11 +1,15 @@
 import { gql } from "@apollo/client/core";
 
+import dotenv from 'dotenv';
+dotenv.config();
+
+
 export const DEGEN_MIN_AMOUNT = 100;
 export const FRAME_MIN_AMOUNT = 1000;
 
 export const DEX_CACHE_TIME = 60;
 
-export const NEXT_PUBLIC_URL = 'http://localhost:3000';
+export const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 export const DEGEN_ADDRESS = '0x4ed4e862860bed51a9570b96d89af5e1b0efefed';
 export const FRAME_ADDRESS = '0x91f45aa2bde7393e0af1cc674ffe75d746b93567';

@@ -9,10 +9,10 @@ export async function GET(req: NextRequest) {
   let paramToken: string | null = searchParams.get("token")
   let paramAccount: string | null = searchParams.get("account")
   let paramPriceUSD: string | null = searchParams.get("price_usd")
-  let paramChange5M: string | null = searchParams.get("change_5m")
-  let paramChange1H: string | null = searchParams.get("change_1h")
-  let paramChange6H: string | null = searchParams.get("change_6h")
-  let paramChange24H: string | null = searchParams.get("change_24h")
+  let paramChangeM5: string | null = searchParams.get("change_m5")
+  let paramChangeH1: string | null = searchParams.get("change_h1")
+  let paramChangeH6: string | null = searchParams.get("change_h6")
+  let paramChangeH24: string | null = searchParams.get("change_h24")
 
   // let paramSwap1: string | null = searchParams.get("swap_1")
   // let paramSwap2: string | null = searchParams.get("swap_2")
@@ -42,13 +42,13 @@ export async function GET(req: NextRequest) {
   const priceUSD = formatDecimal(paramPriceUSD || "0", 'text-6xl')
   
   // use +/- notation for price changes
-  const change5M = parseFloat(paramChange5M || "0")
-  const change1H = parseFloat(paramChange1H || "0")
-  const change6H = parseFloat(paramChange6H || "0")
-  const change24H = parseFloat(paramChange24H || "0")
+  const change5M = parseFloat(paramChangeM5 || "0")
+  const change1H = parseFloat(paramChangeH1 || "0")
+  const change6H = parseFloat(paramChangeH6 || "0")
+  const change24H = parseFloat(paramChangeH24 || "0")
 
   // build me a sample url
-  // http://localhost:3000/api/images/history?token=DEGEN&price_usd=0.005327&change_5m=-5.4&change_1h=-5.4&change_6h=-5.4&change_24h=55.4&account=0x23131e194d5881c7746D8B00e9365657fD2cB227&swap_1={"type":"buy","price":"0.0003765","amount":"50000","amountUSD":"132.88"}&swap_2={"type":"sell","price":"0.0003765","amount":"50000","amountUSD":"132.88"}&swap_3={"type":"buy","price":"0.0003765","amount":"50000","amountUSD":"132.88"}&swap_4={"type":"sell","price":"0.0003765","amount":"50000","amountUSD":"132.88"}&swap_5={"type":"buy","price":"0.0003765","amount":"50000","amountUSD":"132.88"}
+  // http://localhost:3000/api/images/history?token=DEGEN&price_usd=0.005327&change_m5=-5.4&change_h1=-5.4&change_h6=-5.4&change_h24=55.4&account=0x23131e194d5881c7746D8B00e9365657fD2cB227&swap_1={"type":"buy","price":"0.0003765","amount":"50000","amountUSD":"132.88"}&swap_2={"type":"sell","price":"0.0003765","amount":"50000","amountUSD":"132.88"}&swap_3={"type":"buy","price":"0.0003765","amount":"50000","amountUSD":"132.88"}&swap_4={"type":"sell","price":"0.0003765","amount":"50000","amountUSD":"132.88"}&swap_5={"type":"buy","price":"0.0003765","amount":"50000","amountUSD":"132.88"}
 
   try {
     return new ImageResponse(
