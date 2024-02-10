@@ -1,0 +1,34 @@
+{
+  "name": "a-frame-in-100-lines",
+  "version": "0.3.0",
+  "scripts": {
+    "build": "rm -rf .next && next build",
+    "dev": "next dev",
+    "format": "prettier --log-level warn --write .",
+    "start": "next start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "https://twitter.com/Zizzamia",
+  "license": "MIT",
+  "dependencies": {
+    "@apollo/client": "3.9.4",
+    "@coinbase/onchainkit": "0.5.4",
+    "@uniswap/sdk-core": "^4.1.0",
+    "@uniswap/v3-sdk": "^3.10.2",
+    "@vercel/og": "^0.6.2",
+    "dotenv": "^16.4.2",
+    "ethers": "^6.11.0",
+    "graphql": "^16.8.1",
+    "next": "13.5.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "viem": "^2.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.8",
+    "@types/react": "18.2.48",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  }
+}
