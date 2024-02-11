@@ -106,6 +106,7 @@ export async function getPL(userAddress: string, tokenAddress: string, poolAddre
     swapRecords.push(record)
   })
 
+  
   swapRecords.forEach((record: TokenSwapRecord) => {
     position.totalShares += record.amount
     position.totalAmountUSD += record.amountUSD
