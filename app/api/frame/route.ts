@@ -71,6 +71,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   // handle button input
   if (!paramToken) {
     token = message?.button === 1 ? 'degen' : 'frame';
+    currentTab = 'pl';
   } else {
     switch (message?.button) {
       case 1:
