@@ -4,7 +4,7 @@ import { FeeAmount, Pool, TICK_SPACINGS, TickMath, computePoolAddress, priceToCl
 import { ApolloClient, DocumentNode, HttpLink, InMemoryCache, gql, split } from '@apollo/client/core';
 import { DEX_CACHE_TIME, LAST_5_TOKEN1_SWAPS_QUERY, TOKEN1_SWAPS_QUERY } from "./config";
 import { DexResult, HistoryResult, PLResult, SwapType, TokenPosition, TokenSwapRecord } from './types';
-import { Contract, JsonRpcProvider } from 'ethers';
+import { Contract, JsonRpcProvider, formatUnits } from 'ethers';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -32,11 +32,14 @@ const ERC20_ABI = [
   }
 ];
 
-export async function getBalanceOf(address: string, tokenAddress: string): Promise<bigint> {
+export async function getBalanceOf(address: string, tokenAddress: string): Promise<number> {
   const provider = new JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
   const erc20 = new Contract(tokenAddress, ERC20_ABI, provider);
 
-  return await erc20.balanceOf(address);
+  const balance = await erc20.balanceOf(address);
+  const balanceFloat = parseFloat(formatUnits(balance, 18));
+
+  return balanceFloat;
 }
 
 async function getPoolDexResult(poolAddress: string): Promise<DexResult> {
@@ -140,8 +143,8 @@ export async function getPL(userAddress: string, tokenAddress: string, poolAddre
   return {
     dexResult,
     averagePurchasePrice,
-    percentageDifference,
-    multipleDifference,
+    percentageDifference: parseFloat(percentageDifference.toFixed(2)),
+    multipleDifference: parseFloat(multipleDifference.toFixed(2)),
     entryValueUSD,
     currentValueUSD,
     tokenBalance

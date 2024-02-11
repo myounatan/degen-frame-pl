@@ -20,6 +20,8 @@ export async function GET(req: NextRequest) {
   let percentageDifference: string | null = searchParams.get("percentage_diff")
   let multipleDifference: string | null = searchParams.get("multiple_diff")
 
+  paramToken = paramToken?.toUpperCase() || ""
+
   // build me a demo url
   // https://pl-image.vercel.app/api/pl?token=DEGEN&account=0x23131e194d5881c7746D8B00e9365657fD2cB227&price_usd=0.005327&change_m5=-5.4&change_h1=-5.4&change_h6=-5.4&change_h24=55.4&entry_usd=3003.576666&avg_purchase_usd=0.042564&token_balance=888888926&current_usd=3003.56&percentage_diff=0.0&multiple_diff=1.0
 
@@ -48,7 +50,8 @@ export async function GET(req: NextRequest) {
 
   // use xNUM notation for multiple difference
   const multipleDiff = parseFloat(multipleDifference || "1")
-  const multipleDiffFormatted = multipleDiff == 1 ? '' : `(x${multipleDiff})`
+  const multipleDiffFormatted = (multipleDiff == 1 || multipleDiff == 0) ? '' : `(x${multipleDiff})`
+  const multipleDiffColor = multipleDiffFormatted === '' ? 'text-[#8d8d8d]' : (multipleDiff > 1 ? 'text-[#39c040]' : 'text-[#c03939]')
 
   try {
     return new ImageResponse(
@@ -66,7 +69,7 @@ export async function GET(req: NextRequest) {
     <div tw="flex flex-wrap justify-center px-5 w-full">
       <div tw="flex w-full justify-center items-center text-center text-8xl items-center -m-24">
         <p tw="text-[#9c65ef] mr-8">${paramToken}</p>
-        <p tw="text-[#1abffc]">${priceUSD}</p>
+        <p tw="text-[#1abffc]">{priceUSD}</p>
       </div>
       <div tw="flex px-14">
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[200px]">
@@ -94,26 +97,26 @@ export async function GET(req: NextRequest) {
       <div tw="flex items-center justify-center text-center w-full">
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[375px]">
           <p tw="justify-center w-full text-[#8d8d8d] text-4xl -mb-4 -py-4">Entry Value (USD)</p>
-          <p tw="justify-center w-full text-[#1abffc] text-6xl overflow-hidden">${entryValueUSDFormatted}</p>
+          <p tw="justify-center w-full text-[#1abffc] text-5xl overflow-hidden">${entryValueUSDFormatted}</p>
         </div>
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[375px]">
           <p tw="justify-center w-full text-[#8d8d8d] text-4xl -mb-4 -py-4">Avg Purchase (USD)</p>
-          <p tw="justify-center w-full text-[#1abffc] text-6xl overflow-hidden">${avgPurchasePrice}</p>
+          <p tw="justify-center w-full text-[#1abffc] text-5xl overflow-hidden">{avgPurchasePrice}</p>
         </div>
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[375px]">
           <p tw="justify-center w-full text-[#8d8d8d] text-4xl -mb-4 -py-4">Token Balance</p>
-          <p tw="justify-center w-full text-[#1abffc] text-6xl overflow-hidden">{tokenBalance}</p>
+          <p tw="justify-center w-full text-[#1abffc] text-5xl overflow-hidden">{tokenBalance}</p>
         </div>
       </div>
       
       <div tw="flex items-center justify-center text-center w-full">
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[570px]">
           <p tw="justify-center w-full text-[#8d8d8d] text-4xl -mb-4 -py-4">Current Value (USD)</p>
-          <p tw={cn("justify-center w-full text-6xl overflow-hidden", currentValueUSDColor)}>${currentValueUSDFormatted}</p>
+          <p tw={cn("justify-center w-full text-5xl overflow-hidden", currentValueUSDColor)}>${currentValueUSDFormatted}</p>
         </div>
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[570px]">
           <p tw="justify-center w-full text-[#8d8d8d] text-4xl -mb-4 -py-4">Profit/Loss</p>
-          <p tw={cn("justify-center w-full text-6xl overflow-hidden", currentValueUSDColor)}>{percentageDiffFormatted} {multipleDiffFormatted}</p>
+          <p tw={cn("justify-center w-full text-5xl overflow-hidden", multipleDiffColor)}>{percentageDiffFormatted} {multipleDiffFormatted}</p>
         </div>
       </div>
 

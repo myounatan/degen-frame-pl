@@ -23,15 +23,10 @@ function getHomeResponse(): NextResponse {
     getFrameHtmlResponse({
       buttons: [
         {
-          label: 'Load $DEGEN P/L',
-        },
-        {
-          label: 'Load $FRAME P/L',
+          label: 'Start',
         },
       ],
-      image: {
-        src: `${NEXT_PUBLIC_URL}/start.png`,
-      },
+      image: `${NEXT_PUBLIC_URL}/start.png`,
       postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
     }),
   );
@@ -43,13 +38,11 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const paramTab: string | null = searchParams.get("tab")
   const paramAccount: string | null = searchParams.get("account")
 
-  // if (!paramToken || !paramTab) {
-  //   return getHomeResponse();
-  // }
-
   const body: FrameRequest = await req.json();
   const { isValid, message } = await getFrameMessage(body, { neynarApiKey: 'NEYNAR_ONCHAIN_KIT' });
 
+  console.log(`isValid: ${isValid}`)
+  console.log(`message: ${JSON.stringify(message)}`)
 
   if (!isValid) {
     return getHomeResponse();
@@ -61,52 +54,47 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   let navButtons: FrameButtonMetadata[] = []
 
-  const token = paramToken === 'frame' ? 'frame' : 'degen';
+  let token = paramToken === 'frame' ? 'frame' : 'degen';
+
+  const numAccounts = message.interactor.verified_accounts.length;
+
+  // handle button input
+  // if (!paramToken) {
+  //   token = message?.button === 1 ? 'degen' : 'frame';
+  // } else {
+    switch (message?.button) {
+      case 1:
+        token = token === 'degen' ? 'frame' : 'degen';
+        break;
+      case 2:
+        currentTab = currentTab === 'pl' ? 'history' : 'pl';
+        break;
+      // case 3:
+      //   return getHomeResponse();
+      case 3:
+        accountIndex = (accountIndex + 1) % numAccounts;
+        break;
+    }
+  // }
+
   const tokenAddress = token === 'frame' ? FRAME_ADDRESS : DEGEN_ADDRESS;
   const poolAddress = token === 'frame' ? FRAME_POOL_ADDRESS : DEGEN_POOL_ADDRESS;
 
   const switchViewButton = {
-    label: currentTab === 'pl' ? 'View History' : 'View P/L',
+    label: currentTab === 'pl' ? 'View Swap History' : 'View Profit/Loss',
   }
 
-  const numAccounts = message.interactor.verified_accounts.length;
   accountIndex = Math.min(accountIndex, numAccounts - 1);
   accountAddress = message.interactor.verified_accounts[accountIndex];
 
-  // handle button input
-  switch (message?.button) {
-    case ButtonInput.Home:
-      return getHomeResponse();
-    case ButtonInput.SwitchView:
-      currentTab = paramTab === 'pl' ? 'history' : 'pl';
-      break;
-    case ButtonInput.PrevAccount:
-      accountIndex = Math.max(accountIndex - 1, 0);
-      break;
-    case ButtonInput.NextAccount:
-      accountIndex = Math.min(accountIndex + 1, message.interactor.verified_accounts.length - 1);
-      break;
-  }
+  console.log(`paramToken: ${token}`)
+  console.log(`currentTab: ${currentTab}`)
+  console.log(`accountAddress: ${accountAddress}`)
 
-  if (numAccounts > 1 && accountIndex > 0 && accountIndex < numAccounts - 1) {
-    navButtons = [
-      {
-        label: `Prev Account`,
-      },
-      {
-        label: `Next Account`,
-      },
-    ]
-  } else if (numAccounts > 1 && accountIndex === 0) {
+  if (numAccounts > 1) {
     navButtons = [
       {
         label: `Next Account`,
-      },
-    ]
-  } else if (numAccounts > 1 && accountIndex === numAccounts - 1) {
-    navButtons = [
-      {
-        label: `Prev Account`,
       },
     ]
   }
@@ -127,7 +115,14 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
     // generate swap list params
     swapHistory.swapRecords.forEach((record, index) => {
-      imageUrl += `&swap_${index + 1}=${JSON.stringify(record)}`
+      // stringify all props
+      const stringData = encodeURIComponent(JSON.stringify({
+        swapType: record.swapType,
+        tokenUSD: record.tokenUSD.toString(),
+        amount: record.amount.toString(),
+        amountUSD: record.amountUSD.toString(),
+      }))
+      imageUrl += `&swap_${index + 1}=${stringData}`
     })
   }
 
@@ -136,19 +131,22 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
     imageUrl += `&price_usd=${dexResult.priceUSD}&change_m5=${dexResult.priceChange.m5}&change_h1=${dexResult.priceChange.h1}&change_h6=${dexResult.priceChange.h6}&change_h24=${dexResult.priceChange.h24}`
   }
 
+  console.log(`imageUrl: ${imageUrl}`)
+
   return new NextResponse(
     getFrameHtmlResponse({
       buttons: [
         {
-          label: `Home`,
+          label: `View ${token === 'degen' ? '$FRAME' : '$DEGEN'}`,
         },
         switchViewButton,
+        // {
+        //   label: 'Home',
+        // },
         ...navButtons,
       ],
-      image: {
-        src: imageUrl,
-      },
-      postUrl: `${NEXT_PUBLIC_URL}/api/frame?tab=${currentTab}&account=${accountIndex}`,
+      image: imageUrl,
+      postUrl: `${NEXT_PUBLIC_URL}/api/frame?tab=${currentTab}&account=${accountIndex}&token=${token}`,
     }),
   );
 }

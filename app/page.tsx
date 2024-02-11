@@ -1,21 +1,14 @@
 import { getFrameMetadata } from '@coinbase/onchainkit';
 import type { Metadata } from 'next';
 import { NEXT_PUBLIC_URL } from './api/config';
-import { ImageResponse } from 'next/dist/compiled/@vercel/og';
 
 const frameMetadata = getFrameMetadata({
   buttons: [
     {
-      label: 'Load $DEGEN P/L',
-    },
-    {
-      label: 'Load $FRAME P/L',
-    },
+      label: 'Start',
+    }
   ],
-  image: {
-    src: `${NEXT_PUBLIC_URL}/start.png`,
-    // aspectRatio: '1:1',
-  },
+  image: `${NEXT_PUBLIC_URL}/start.png`,
   // input: {
   //   text: 'Tell me a boat story',
   // },

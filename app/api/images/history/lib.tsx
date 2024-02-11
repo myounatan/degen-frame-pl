@@ -11,7 +11,7 @@ export function countZerosAfterDecimal(num: string): number {
 export function formatDecimal(num: string, ...classNames: string[]) {
   const zeroCount = countZerosAfterDecimal(num);
   
-  if (zeroCount <= 3) return num.toString();
+  if (zeroCount <= 3) return parseFloat(num).toFixed(zeroCount+4);
 
   const splitNum = num.toString().split('.');
 

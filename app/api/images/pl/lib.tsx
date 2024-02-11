@@ -11,7 +11,7 @@ export function countZerosAfterDecimal(num: string): number {
 export function formatDecimal(num: string, ...classNames: string[]) {
   const zeroCount = countZerosAfterDecimal(num);
   
-  if (zeroCount <= 3) return num.toString();
+  if (zeroCount <= 3) return parseFloat(num).toFixed(zeroCount+4);
 
   const splitNum = num.toString().split('.');
 
@@ -27,6 +27,8 @@ export function formatPercentage(num: number, ...classNames: string[]) {
 }
 
 export function commify(num: number, decimals: number = 2) {
+  if (num < 1000) return formatDecimal(num.toString());
+
   num = parseFloat(num.toFixed(decimals));
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

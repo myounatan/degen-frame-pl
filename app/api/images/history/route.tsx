@@ -14,6 +14,8 @@ export async function GET(req: NextRequest) {
   let paramChangeH6: string | null = searchParams.get("change_h6")
   let paramChangeH24: string | null = searchParams.get("change_h24")
 
+  paramToken = paramToken?.toUpperCase() || ""
+
   // let paramSwap1: string | null = searchParams.get("swap_1")
   // let paramSwap2: string | null = searchParams.get("swap_2")
   // let paramSwap3: string | null = searchParams.get("swap_3")
@@ -27,13 +29,14 @@ export async function GET(req: NextRequest) {
   for (let i = 1; i <= 5; i++) {
     let swap: string | null = searchParams.get(`swap_${i}`)
     if (swap) {
-      const data = JSON.parse(swap)
+      console.log(`PARSING swap_${i}: ${swap}`)
+      const data = JSON.parse(decodeURIComponent(swap))
       swaps.push({
         key: i-1,
-        type: data.type.toUpperCase(),
-        price: (<>${formatDecimal(data.price || "0", 'text-3xl')}</>),
-        amount: commify(parseFloat(data.amount)),
-        amountUSD: `$${commify(parseFloat(data.amountUSD))}`,
+        swapType: data.swapType.toUpperCase(),
+        tokenUSD: (<>{formatDecimal(data.tokenUSD || "0", 'text-3xl')}</>),
+        amount: commify(Math.abs(parseFloat(data.amount))),
+        amountUSD: `$${commify(Math.abs(parseFloat(data.amountUSD)))}`,
       })
     }
   }
@@ -66,7 +69,7 @@ export async function GET(req: NextRequest) {
     <div tw="flex flex-wrap justify-center px-5 w-full">
       <div tw="flex w-full justify-center items-center text-center text-8xl items-center -m-24">
         <p tw="text-[#9c65ef] mr-8">${paramToken}</p>
-        <p tw="text-[#1abffc]">${priceUSD}</p>
+        <p tw="text-[#1abffc]">{priceUSD}</p>
       </div>
       <div tw="flex px-14">
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[200px]">
@@ -98,14 +101,14 @@ export async function GET(req: NextRequest) {
           </span> : swaps.map((swap) => (
             <div key={swap.key} tw={cn(`opacity-${100-(swap.key*15)}`, "mt-3 flex items-center justify-center text-5xl border border-[#566486] rounded-2xl h-[53px] w-auto px-5")}>
               <div tw="flex text-center items-center justify-center w-[120px]">
-                <p tw={cn(swap.type == "BUY" ? "text-[#39c040]" : "text-[#c07a39]")}>{swap.type}</p>
+                <p tw={cn(swap.swapType == "BUY" ? "text-[#39c040]" : "text-[#c07a39]")}>{swap.swapType}</p>
               </div>
               <div tw="flex justify-center text-center items-center justify-center pr-1">
                 <span tw="flex flex-auto text-[#1abffc]">{swap.amountUSD}</span>
                 <span tw="text-[#8d8d8d] w-[40px] justify-center">|</span>
                 <span tw="text-[#1abffc] justify-center">{swap.amount}</span>
                 <span tw="text-[#8d8d8d] w-[70px] justify-center">@</span>
-                <span tw="text-[#1abffc] justify-center">{swap.price}</span>
+                <span tw="text-[#1abffc] justify-center">{swap.tokenUSD}</span>
               </div>
             </div>
           ))

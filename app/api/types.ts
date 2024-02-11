@@ -34,7 +34,7 @@ export interface PLResult {
   multipleDifference: number;
   entryValueUSD: number;
   currentValueUSD: number;
-  tokenBalance: bigint;
+  tokenBalance: number; // decimal
 }
 
 export interface HistoryResult {
