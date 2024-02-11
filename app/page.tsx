@@ -32,6 +32,9 @@ export default function Page() {
   return (
     <>
       <h1>degen-frame-pl</h1>
+      <p>Check out the repo here: <a href="https://github.com/myounatan/degen-frame-pl" target="_blank">degen-frame-pl</a></p>
+      <p>Built by Matthew Younatan</p>
+      <p><a href="https://twitter.com/matyounatan" target="_blank">Twitter/X</a> <a href="https://warpcast.com/matyounatan" target="_blank">Warpcast</a> <a href="https://linkedin.com/in/matthewyounatan" target="_blank">LinkedIn</a></p>
     </>
   );
 }

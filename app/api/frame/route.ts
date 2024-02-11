@@ -50,7 +50,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   let accountIndex = paramAccount ? parseInt(paramAccount) : 0
   let accountAddress: string | undefined = '';
-  let currentTab = paramTab === 'pl' ? 'pl' : 'history';
+  let currentTab = paramTab === 'history' ? 'history' : 'pl';
 
   let navButtons: FrameButtonMetadata[] = []
 
