@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <img src={NEXT_PUBLIC_URL+"/start.png"}></img>
+      <h1>degen-frame-pl</h1>
     </>
   );
 }
