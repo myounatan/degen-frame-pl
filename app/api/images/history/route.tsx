@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
     <div tw="flex flex-wrap justify-center px-5 w-full">
       <div tw="flex w-full justify-center items-center text-center text-8xl items-center -m-24">
         <p tw="text-[#9c65ef] mr-8">${paramToken}</p>
-        <p tw="text-[#1abffc]">{priceUSD}</p>
+        <p tw="text-[#1abffc]">${priceUSD}</p>
       </div>
       <div tw="flex px-14">
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[200px]">

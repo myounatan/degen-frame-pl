@@ -16,7 +16,7 @@ export function formatDecimal(num: string, ...classNames: string[]) {
   const splitNum = num.toString().split('.');
 
   return (
-    <>${splitNum[0]}.0<span tw={cn("justify-end items-end -mb-2", ...classNames)}>{zeroCount}</span>{splitNum[1].substring(zeroCount, 4 + zeroCount)}</>
+    <>{splitNum[0]}.0<span tw={cn("justify-end items-end -mb-2", ...classNames)}>{zeroCount}</span>{splitNum[1].substring(zeroCount, 4 + zeroCount)}</>
   )
 }
 
