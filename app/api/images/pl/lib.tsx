@@ -27,8 +27,9 @@ export function formatPercentage(num: number, ...classNames: string[]) {
 }
 
 export function commify(num: number, decimals: number = 2) {
-  if (num < 1000) return formatDecimal(num.toString());
-
   num = parseFloat(num.toFixed(decimals));
+
+  if (num < 1000) return num
+
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
