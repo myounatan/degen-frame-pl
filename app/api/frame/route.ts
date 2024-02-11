@@ -23,11 +23,14 @@ function getHomeResponse(): NextResponse {
     getFrameHtmlResponse({
       buttons: [
         {
-          label: 'Start',
+          label: '$DEGEN',
+        },
+        {
+          label: '$FRAME',
         },
       ],
       image: `${NEXT_PUBLIC_URL}/start.png`,
-      postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
+      postUrl: `${NEXT_PUBLIC_URL}/api/frame?tab=pl&account=0`,
     }),
   );
 }
@@ -44,13 +47,20 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   console.log(`isValid: ${isValid}`)
   console.log(`message: ${JSON.stringify(message)}`)
 
+  // // if not included, then we are coming from home
+  // // set to degen if 1 and frame if 2
+  // if (!paramToken && !paramTab && !paramAccount) {
+  //   token = message?.button === 1 ? 'degen' : 'frame';
+  // }
+
+
   if (!isValid) {
     return getHomeResponse();
   }
 
   let accountIndex = paramAccount ? parseInt(paramAccount) : 0
   let accountAddress: string | undefined = '';
-  let currentTab = paramTab === 'history' ? 'history' : 'pl';
+  let currentTab = paramTab == 'pl' ? 'pl' : 'history';
 
   let navButtons: FrameButtonMetadata[] = []
 
@@ -59,9 +69,9 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const numAccounts = message.interactor.verified_accounts.length;
 
   // handle button input
-  // if (!paramToken) {
-  //   token = message?.button === 1 ? 'degen' : 'frame';
-  // } else {
+  if (!paramToken) {
+    token = message?.button === 1 ? 'degen' : 'frame';
+  } else {
     switch (message?.button) {
       case 1:
         token = token === 'degen' ? 'frame' : 'degen';
@@ -75,7 +85,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
         accountIndex = (accountIndex + 1) % numAccounts;
         break;
     }
-  // }
+  }
 
   const tokenAddress = token === 'frame' ? FRAME_ADDRESS : DEGEN_ADDRESS;
   const poolAddress = token === 'frame' ? FRAME_POOL_ADDRESS : DEGEN_POOL_ADDRESS;

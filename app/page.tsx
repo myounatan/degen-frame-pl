@@ -5,14 +5,17 @@ import { NEXT_PUBLIC_URL } from './api/config';
 const frameMetadata = getFrameMetadata({
   buttons: [
     {
-      label: 'Start',
-    }
+      label: '$DEGEN',
+    },
+    {
+      label: '$FRAME',
+    },
   ],
   image: `${NEXT_PUBLIC_URL}/start.png`,
   // input: {
   //   text: 'Tell me a boat story',
   // },
-  postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
+  postUrl: `${NEXT_PUBLIC_URL}/api/frame?tab=pl&account=0`,
 });
 
 export const metadata: Metadata = {
