@@ -1,9 +1,11 @@
-import { FrameRequest, getFrameMessage, getFrameHtmlResponse, FrameButtonMetadata } from '@coinbase/onchainkit';
+import { getFrameHtmlResponse, FrameButtonMetadata } from '@coinbase/onchainkit';
 import { NextRequest, NextResponse } from 'next/server';
-import { DEGEN_ADDRESS, DEGEN_POOL_ADDRESS, DEX_CACHE_TIME, FRAME_ADDRESS, FRAME_POOL_ADDRESS, NEXT_PUBLIC_URL } from '../config';
+import { DEGEN_ADDRESS, DEGEN_POOL_ADDRESS, FRAME_ADDRESS, FRAME_POOL_ADDRESS, NEXT_PUBLIC_URL } from '../config';
 import { DexResult, HistoryResult, PLResult } from '../types';
 import { getLast5Swaps, getPL } from '../lib';
-
+import {
+  getFrameMessage,
+} from "frames.js";
 
 /* url params:
   - token: specifies the token to display data for, can be 'degen' or 'frame'
@@ -34,22 +36,20 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const paramTab: string | null = searchParams.get("tab")
   const paramAccount: string | null = searchParams.get("account")
 
-  const body: FrameRequest = await req.json();
-  const { isValid, message } = await getFrameMessage(body, { neynarApiKey: 'NEYNAR_ONCHAIN_KIT' });
+  const body: any = await req.json();
 
-  console.log(`isValid: ${isValid}`)
-  console.log(`message: ${JSON.stringify(message)}`)
+  const frameMessage = await getFrameMessage(body);
 
-  // // if not included, then we are coming from home
-  // // set to degen if 1 and frame if 2
-  // if (!paramToken && !paramTab && !paramAccount) {
-  //   token = message?.button === 1 ? 'degen' : 'frame';
-  // }
+  console.log(`isValid: ${frameMessage?.isValid}`)
+  console.log(frameMessage)
 
-
-  if (!isValid) {
-    return getHomeResponse();
+  if (!frameMessage/* && !frameMessage?.isValid*/) {
+    throw new Error("Invalid frame payload");
   }
+
+  // if (!isValid) {
+  //   return getHomeResponse();
+  // }
 
   let accountIndex = paramAccount ? parseInt(paramAccount) : 0
   let accountAddress: string | undefined = '';
@@ -59,14 +59,14 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   let token = paramToken === 'frame' ? 'frame' : 'degen';
 
-  const numAccounts = message.interactor.verified_accounts.length;
+  const numAccounts = frameMessage.requesterVerifiedAddresses.length;
 
   // handle button input
   if (!paramToken) {
-    token = message?.button === 1 ? 'degen' : 'frame';
+    token = frameMessage.buttonIndex === 1 ? 'degen' : 'frame';
     currentTab = 'pl';
   } else {
-    switch (message?.button) {
+    switch (frameMessage.buttonIndex) {
       case 1:
         token = token === 'degen' ? 'frame' : 'degen';
         break;
@@ -89,7 +89,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   }
 
   accountIndex = Math.min(accountIndex, numAccounts - 1);
-  accountAddress = message.interactor.verified_accounts[accountIndex];
+  accountAddress = frameMessage.requesterVerifiedAddresses[accountIndex];
 
   console.log(`paramToken: ${token}`)
   console.log(`currentTab: ${currentTab}`)

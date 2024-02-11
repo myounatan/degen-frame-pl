@@ -12,8 +12,10 @@
   "author": "https://twitter.com/Zizzamia",
   "license": "MIT",
   "dependencies": {
+    "frames.js": "^0.5.0",
     "@apollo/client": "3.9.4",
     "@coinbase/onchainkit": "0.5.4",
+    "@noble/ed25519": "^2.0.0",
     "@uniswap/sdk-core": "^4.1.0",
     "@uniswap/v3-sdk": "^3.10.2",
     "@vercel/og": "^0.6.2",
@@ -24,6 +26,7 @@
     "next": "13.5.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "swr": "^2.2.4",
     "utf-8-validate": "^6.0.3",
     "viem": "^2.7.1",
     "ws": "^8.16.0"

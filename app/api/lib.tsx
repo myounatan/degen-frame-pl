@@ -1,7 +1,4 @@
-
-import { CHAIN_TO_ADDRESSES_MAP, ChainId, Token } from '@uniswap/sdk-core';
-import { FeeAmount, Pool, TICK_SPACINGS, TickMath, computePoolAddress, priceToClosestTick } from '@uniswap/v3-sdk';
-import { ApolloClient, DocumentNode, HttpLink, InMemoryCache, gql, split } from '@apollo/client/core';
+import { ApolloClient, DocumentNode, HttpLink, InMemoryCache } from '@apollo/client/core';
 import { DEX_CACHE_TIME, LAST_5_TOKEN1_SWAPS_QUERY, TOKEN1_SWAPS_QUERY } from "./config";
 import { DexResult, HistoryResult, PLResult, SwapType, TokenPosition, TokenSwapRecord } from './types';
 import { Contract, JsonRpcProvider, formatUnits } from 'ethers';
@@ -106,7 +103,7 @@ export async function getPL(userAddress: string, tokenAddress: string, poolAddre
     swapRecords.push(record)
   })
 
-  
+
   swapRecords.forEach((record: TokenSwapRecord) => {
     position.totalShares += record.amount
     position.totalAmountUSD += record.amountUSD
