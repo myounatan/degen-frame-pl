@@ -15,7 +15,7 @@ const frameMetadata = getFrameMetadata({
   // input: {
   //   text: 'Tell me a boat story',
   // },
-  postUrl: `${NEXT_PUBLIC_URL}/api/frame?tab=pl&account=0`,
+  postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
 });
 
 export const metadata: Metadata = {

@@ -30,7 +30,7 @@ function getHomeResponse(): NextResponse {
         },
       ],
       image: `${NEXT_PUBLIC_URL}/start.png`,
-      postUrl: `${NEXT_PUBLIC_URL}/api/frame?tab=pl&account=0`,
+      postUrl: `${NEXT_PUBLIC_URL}/api/frame`,
     }),
   );
 }
