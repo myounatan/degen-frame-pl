@@ -11,13 +11,6 @@ import { getLast5Swaps, getPL } from '../lib';
   - account: specifies the account index to display data for
 */
 
-enum ButtonInput {
-  Home = 1,
-  SwitchView = 2,
-  PrevAccount = 3,
-  NextAccount = 4,
-}
-
 function getHomeResponse(): NextResponse {
   return new NextResponse(
     getFrameHtmlResponse({
