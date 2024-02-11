@@ -43,9 +43,9 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const paramTab: string | null = searchParams.get("tab")
   const paramAccount: string | null = searchParams.get("account")
 
-  if (!paramToken || !paramTab) {
-    return getHomeResponse();
-  }
+  // if (!paramToken || !paramTab) {
+  //   return getHomeResponse();
+  // }
 
   const body: FrameRequest = await req.json();
   const { isValid, message } = await getFrameMessage(body, { neynarApiKey: 'NEYNAR_ONCHAIN_KIT' });
@@ -57,7 +57,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
 
   let accountIndex = paramAccount ? parseInt(paramAccount) : 0
   let accountAddress: string | undefined = '';
-  let currentTab = paramTab.toLocaleLowerCase() === 'pl' ? 'pl' : 'history';
+  let currentTab = paramTab === 'pl' ? 'pl' : 'history';
 
   let navButtons: FrameButtonMetadata[] = []
 
