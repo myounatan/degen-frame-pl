@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   let tokenBalance = commify(parseFloat(paramTokenBalance || "0"))
 
   let currentValueUSD = parseFloat(paramCurrentValueUSD || "0")
-  let currentValueUSDFormatted = commify(currentValueUSD)
+  let currentValueUSDFormatted = currentValueUSD > 1 ? commify(currentValueUSD) : formatDecimal(currentValueUSD.toString())
   const currentValueUSDColor = currentValueUSD > entryValueUSD ? 'text-[#39c040]' : (currentValueUSD == entryValueUSD ? 'text-[#8d8d8d]' : 'text-[#c03939]')
   
   // use +/- notation for percentage difference
@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
         </div>
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[375px]">
           <p tw="justify-center w-full text-[#8d8d8d] text-4xl -mb-4 -py-4">Avg Purchase (USD)</p>
-          <p tw="justify-center w-full text-[#1abffc] text-5xl overflow-hidden">{avgPurchasePrice}</p>
+          <p tw="justify-center w-full text-[#1abffc] text-5xl overflow-hidden">${avgPurchasePrice}</p>
         </div>
         <div tw="flex flex-wrap bg-[#061026] rounded-md border border-[#1a2338] m-2 w-[375px]">
           <p tw="justify-center w-full text-[#8d8d8d] text-4xl -mb-4 -py-4">Token Balance</p>

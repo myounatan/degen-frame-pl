@@ -108,7 +108,7 @@ export async function GET(req: NextRequest) {
                 <span tw="text-[#8d8d8d] w-[40px] justify-center">|</span>
                 <span tw="text-[#1abffc] justify-center">{swap.amount}</span>
                 <span tw="text-[#8d8d8d] w-[70px] justify-center">@</span>
-                <span tw="text-[#1abffc] justify-center">{swap.tokenUSD}</span>
+                <span tw="text-[#1abffc] justify-center">${swap.tokenUSD}</span>
               </div>
             </div>
           ))
