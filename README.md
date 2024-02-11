@@ -18,7 +18,7 @@ Published to [https://degen-frame-pl.younatan.ca/](https://degen-frame-pl.younat
 
 Check it out live! [a link to the OG cast]()
 
-## License
+## License - MIT
 
 If you clone this repo, please credit me appropriately.
 
