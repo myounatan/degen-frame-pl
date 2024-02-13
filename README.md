@@ -5,6 +5,7 @@ Created by **@matyounatan**
 [Warpcast](https://warpcast.com/matyounatan) [Twitter/X](https://twitter.com/matyounatan) [Website](https://younatan.ca/)
 
 Built on top of [https://github.com/Zizzamia/a-frame-in-100-lines](https://github.com/Zizzamia/a-frame-in-100-lines)
+and [https://github.com/framesjs/frames.js](https://github.com/framesjs/frames.js)
 
 ## How it works
 
@@ -18,7 +19,7 @@ Reads Uniswap V3 subgraph for the connected Warpcast account and dynamically ren
 
 Published to [https://degen.younatan.ca/](https://degen.younatan.ca/)
 
-Check it out live! (Must be signed into Warpcast) [a link to the OG cast]()
+Check it out live! (Must be signed into Warpcast) [https://warpcast.com/matyounatan/0x26265d5b](https://warpcast.com/matyounatan/0x26265d5b)
 
 ## License - MIT
 
